@@ -18,6 +18,7 @@ use GearmanClient;
  */
 class GearmanService extends GearmanClient
 {
+    fail
     /**
      * @var array
      */
