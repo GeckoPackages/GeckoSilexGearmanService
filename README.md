@@ -6,26 +6,27 @@ A service provider for [ Silex ](http://silex.sensiolabs.org) 2.* and the [ Gear
 
 ### Requirements
 
-PHP >= 5.5.0
+PHP >= 5.5.9 (PHP7 supported)
 
 ### Install
 
-The package can be installed using [ Composer ](https://getcomposer.org/). Add the package to your `composer.json`.
+The package can be installed using [Composer](https://getcomposer.org/). Add the package to your `composer.json`.
 
 ```
 "require": {
-    "gecko-packages/gecko-silex-gearman-service" : "dev-master"
+    "gecko-packages/gecko-silex-gearman-service" : "^1.0"
 }
 ```
-
-*Note:* We are currently working on a first stable release.
 
 ## Usage
 
 ```php
 $app->register(new GearmanServiceProvider());
-$app['gearman']->addTaskHigh("compressVideo", '["4K","asset1"]', null, '2');
+$app['gearman']->addTaskHigh("compressVideo", '["4K", "asset1"]', null, '2');
 ```
+
+The service will provide a `GearmanService` object which extends the `GearmanClient` class.
+See below for details.
 
 ## Options
 
@@ -42,10 +43,6 @@ The service takes the following options:
     Client options (`int`).
     *default:* `null` does not set options.
 
-* `gearman.context`
-    Client context (`string`)
-    *default:* `null` does not set a context.
-
 ### Example
 
 ```php
@@ -55,10 +52,27 @@ $app->register(
         'gearman.servers' => ['192.168.0.1' => 111],
         'gearman.timeout' => 15,
         'gearman.options' => GEARMAN_CLIENT_NON_BLOCKING | GEARMAN_CLIENT_FREE_TASKS,
-        'gearman.context' => 'app1',
     ]
 );
 ```
+
+## Service methods and behavior
+
+The `GearmanService` class extends the `GearmanClient` class so all its methods are available.
+Additionally it provides the following methods:
+
+```php
+// returns an array<string, array<string, int>> with servers added to the client
+$app['gearman']->getServers()
+
+// alternative for GearmanClient::options, returns an <int>
+$app['gearman']->getOptions()
+
+// alternative for GearmanClient::timeout, returns an <int>
+$app['gearman']->getTimeOut()
+```
+
+On construction of the service the timeout will be set explicitly to `GEARMAN_DEFAULT_SOCKET_TIMEOUT` if no other value is passed.
 
 ## Custom name registering / multiple services
 

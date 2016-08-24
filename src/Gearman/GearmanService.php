@@ -21,49 +21,14 @@ class GearmanService extends GearmanClient
     /**
      * @var array
      */
-    private $servers;
-
-    /**
-     * Work around for retrieving the context when not set result on segmentation fault.
-     *
-     * @var bool
-     */
-    private $contextSet = false;
-
-    /**
-     * @param array<string, int> $servers
-     * @param int|null           $timeout
-     * @param int|null           $options
-     * @param string|null        $context
-     */
-    public function __construct(array $servers = [], $timeout = null, $options = null, $context = null)
-    {
-        $this->servers = [];
-        foreach ($servers as $host => $port) {
-            if (is_int($host)) {
-                $this->addServer($port, 4730);
-            } else {
-                $this->addServer($host, $port);
-            }
-        }
-
-        if (null !== $context) {
-            $this->setContext($context);
-        }
-
-        if (null !== $options) {
-            $this->setOptions($options);
-        }
-
-        $this->setTimeout(null === $timeout ? GEARMAN_DEFAULT_SOCKET_TIMEOUT : $timeout);
-    }
+    private $servers = [];
 
     /**
      * {@inheritdoc}
      */
     public function addServer($host = '127.0.0.1', $port = 4730)
     {
-        $this->servers[$host] = $port;
+        $this->putServer($host, $port);
 
         return parent::addServer($host, $port);
     }
@@ -76,32 +41,10 @@ class GearmanService extends GearmanClient
         $serversExploded = explode(',', $servers);
         foreach ($serversExploded as $serverExploded) {
             $serverExploded = explode(':', $serverExploded);
-            $this->servers[$serverExploded[0]] = count($serverExploded) > 1 ? (int) $serverExploded[1] : 4730;
+            $this->putServer($serverExploded[0], count($serverExploded) > 1 ? $serverExploded[1] : 4730);
         }
 
         return parent::addServers($servers);
-    }
-
-    /**
-     * @return null|string
-     */
-    public function context()
-    {
-        if (!$this->contextSet) {
-            // not set context segfaults on default -> https://github.com/hjr3/pecl-gearman/issues/15
-            return null;
-        }
-
-        // trim() -> https://github.com/hjr3/pecl-gearman/issues/15
-        return trim(parent::context());
-    }
-
-    /**
-     * @return string @see GearmanService::context
-     */
-    public function getContext()
-    {
-        return $this->context();
     }
 
     /**
@@ -113,19 +56,14 @@ class GearmanService extends GearmanClient
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setContext($context)
-    {
-        $this->contextSet = true;
-
-        return parent::setContext(trim($context));
-    }
-
-    /**
-     * Returns servers added to the client.
+     * Returns the servers added to the client.
      *
-     * @return array<string, int>
+     * Note:
+     * Do not rely on the format of the keys as the format is not guaranteed.
+     * Well unlikely the format of the keys may change in the future these
+     * are still considered arbitrary.
+     *
+     * @return array<string, array<string, int>>
      */
     public function getServers()
     {
@@ -141,10 +79,11 @@ class GearmanService extends GearmanClient
     }
 
     /**
-     * @return bool
+     * @param string     $host
+     * @param string|int $port
      */
-    public function isContextSet()
+    private function putServer($host, $port)
     {
-        return $this->contextSet;
+        $this->servers[$host.':'.$port] = [(string) $host => (int) $port];
     }
 }
