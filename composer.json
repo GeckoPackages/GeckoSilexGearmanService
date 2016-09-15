@@ -1,18 +1,18 @@
 {
-  "name": "gecko-packages/gecko-silex-gearman-service",
-  "type": "library",
-  "homepage": "https://github.com/GeckoPackages",
-  "description": "Gearman service for Silex.",
-  "license": "MIT",
-  "keywords" : ["Silex", "Gearman"],
-  "require": {
-    "php": "^5.5.9 || ^7.0",
-    "silex/silex": "v2.*",
-    "ext-gearman": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "GeckoPackages\\Silex\\Services\\Gearman\\": "src\\Gearman"
+    "name": "gecko-packages/gecko-silex-gearman-service",
+    "type": "library",
+    "homepage": "https://github.com/GeckoPackages",
+    "description": "Gearman service for Silex.",
+    "license": "MIT",
+    "keywords" : ["Silex", "Gearman"],
+    "require": {
+        "php": "^5.5.9 || ^7.0",
+        "silex/silex": "v2.*",
+        "ext-gearman": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "GeckoPackages\\Silex\\Services\\Gearman\\": "src\\Gearman"
+        }
     }
-  }
 }
