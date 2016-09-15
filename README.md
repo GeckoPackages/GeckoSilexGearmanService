@@ -6,7 +6,7 @@ A service provider for [ Silex ](http://silex.sensiolabs.org) 2.* and the [ Gear
 
 ### Requirements
 
-PHP >= 5.5.9 (PHP7 supported)
+PHP 5.5.9 (PHP7 supported). Optional HHVM support >= 3.9.
 
 ### Install
 

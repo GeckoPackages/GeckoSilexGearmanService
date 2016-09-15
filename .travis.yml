@@ -7,29 +7,41 @@ matrix:
     fast_finish: true
     include:
         - php: 5.5
-          sudo: required
+          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
         - php: 5.6
-          sudo: required
+          env: COMPOSER_FLAGS="--prefer-stable"
         - php: 7.0
-          dist: trusty
-          group: edge
+          env: COMPOSER_FLAGS="--prefer-stable"
         - php: 7.1
+          env: COMPOSER_FLAGS="--dev"
+        - php: hhvm-3.9
+          sudo: required
           dist: trusty
           group: edge
+          env: COMPOSER_FLAGS="--prefer-stable"
+        - php: hhvm-nightly
+          sudo: required
+          dist: trusty
+          group: edge
+          env: COMPOSER_FLAGS="--dev"
     allow_failures:
         - php: 7.0
         - php: 7.1
+        - php: hhvm-3.9
+        - php: hhvm-nightly
 
 before_install:
-  - sudo add-apt-repository -y ppa:gearman-developers/ppa
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libgearman-dev gearman-job-server
-  - pecl install gearman
+    - sudo add-apt-repository -y ppa:gearman-developers/ppa
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq libgearman-dev gearman-job-server
+    - pecl install gearman
 
 before_script:
-  - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=123 -d
-  - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=4730 -d
-  - composer install --no-interaction
+    - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=123 -d
+    - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=4730 -d
+    - composer update $COMPOSER_FLAGS --no-interaction -v
+    - if [[ $TRAVIS_PHP_VERSION = 7.0 ]]; then curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v1.12.1/php-cs-fixer.phar -o php-cs-fixer.phar; fi
 
 script:
-  - phpunit --verbose
+    - phpunit --verbose
+    - if [[ $TRAVIS_PHP_VERSION = 7.0 ]]; then php php-cs-fixer.phar --dry-run -v --config-file=.php_cs.dist fix; fi
