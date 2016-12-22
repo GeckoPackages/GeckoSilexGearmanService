@@ -14,6 +14,9 @@ namespace GeckoPackages\Silex\Services\Gearman;
 use GearmanClient;
 
 /**
+ * @final
+ * @internal
+ *
  * @author SpacePossum
  */
 class GearmanService extends GearmanClient
