@@ -16,7 +16,7 @@ use GearmanClient;
 /**
  * @author SpacePossum
  */
-class GearmanService extends GearmanClient
+final class GearmanService extends GearmanClient
 {
     /**
      * @var array
