@@ -40,9 +40,11 @@ before_script:
     - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=123 -d
     - sudo /usr/sbin/gearmand --listen=127.0.0.1 --port=4730 -d
     - composer update $COMPOSER_FLAGS --no-interaction -v
-    - if [[ $TRAVIS_PHP_VERSION = 7.0 ]]; then curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.0.0/php-cs-fixer.phar -o php-cs-fixer.phar; fi
+    - composer info -D | sort
+    - if [[ $TRAVIS_PHP_VERSION = 7.1 ]]; then curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.1.2/php-cs-fixer.phar -o php-cs-fixer.phar; fi
 
 script:
     - phpunit --verbose
     - phpenv config-rm xdebug.ini || return 0
-    - if [[ $TRAVIS_PHP_VERSION = 7.0 ]]; then php php-cs-fixer.phar --dry-run -vvv fix; fi
+    - if [[ $TRAVIS_PHP_VERSION = 7.1 ]]; then php php-cs-fixer.phar --dry-run -vvv fix; fi
+    - if [[ $TRAVIS_PHP_VERSION = 7.1 ]]; then files_with_trailing_spaces=`find . -type f -not -path "./.git/*" -exec egrep -nH " $" {} \;` && [[ $files_with_trailing_spaces ]] && echo $files_with_trailing_spaces || echo "No trailing spaces detected."; fi

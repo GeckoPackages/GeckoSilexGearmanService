@@ -15,11 +15,12 @@ use GearmanClient;
 
 /**
  * @final
+ *
  * @internal
  *
  * @author SpacePossum
  */
-final class GearmanService extends GearmanClient
+class GearmanService extends GearmanClient
 {
     /**
      * @var array
