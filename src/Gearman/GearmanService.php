@@ -15,6 +15,7 @@ use GearmanClient;
 
 /**
  * @final
+ *
  * @internal
  *
  * @author SpacePossum
